@@ -49,7 +49,7 @@ class MySiteScreen: BaseScreen {
         readerButton = app.buttons[ElementStringIDs.ReaderButton]
         switchSiteButton = app.buttons[ElementStringIDs.switchSiteButton]
 
-        super.init(element: XCUIApplication().navigationBars[ElementStringIDs.navBarTitle])
+        super.init(element: switchSiteButton)
     }
 
     func showSiteSwitcher() -> MySitesScreen {
@@ -67,6 +67,12 @@ class MySiteScreen: BaseScreen {
     }
 
     func gotoPostsScreen() -> PostsScreen {
+
+        // A hack for iPad, because sometimes tapping "posts" doesn't load it the first time
+        if isIpad {
+            mediaButton.tap()
+        }
+
         postsButton.tap()
         return PostsScreen()
     }
