@@ -14,13 +14,13 @@ platform :ios do
   # is only built once.
   # -----------------------------------------------------------------------------------
   # Usage:
-  # bundle exec fastlane screenshots 
+  # bundle exec fastlane screenshots
   #
   # Example:
   # bundle exec fastlane screenshots
   #####################################################################################
   desc "Generate localised screenshots"
-  lane :screenshots  do |options| 
+  lane :screenshots  do |options|
     fastlane_directory = File.expand_path File.dirname(__FILE__)
     derived_data_path = File.join(fastlane_directory, "DerivedData")
 
@@ -61,23 +61,78 @@ platform :ios do
   end
 
   #####################################################################################
+  # jetpack_screenshots
+  # -----------------------------------------------------------------------------------
+  # This lane generates the Jetpack localised screenshots.
+  # It is the same as running bundle exec fastlane snapshot, but ensures that the app
+  # is only built once.
+  # -----------------------------------------------------------------------------------
+  # Usage:
+  # bundle exec fastlane jetpack_screenshots
+  #
+  # Example:
+  # bundle exec fastlane jetpack_screenshots
+  #####################################################################################
+  desc "Generate localised Jetpack screenshots"
+  lane :jetpack_screenshots  do |options|
+    fastlane_directory = File.expand_path File.dirname(__FILE__)
+    derived_data_path = File.join(fastlane_directory, "DerivedData")
+
+    Dir.chdir("../../") do
+      FileUtils.rm_rf('Pods')
+    end
+
+    sh('bundle exec pod install')
+    FileUtils.rm_rf(derived_data_path)
+
+    scan(
+      workspace: File.join(fastlane_directory, "../../WordPress.xcworkspace"),
+      scheme: "JetpackScreenshotGeneration",
+      build_for_testing: true,
+      derived_data_path: derived_data_path,
+    )
+
+    # languages = "da de-DE en-AU en-CA en-GB es-ES fr-FR id it ja ko no nl-NL pt-BR pt-PT ru sv th tr zh-Hans zh-Hant en-US".split(" ")
+    languages = "en-US".split(" ")
+
+    # Allow creating screenshots for just one languages
+    if options[:language] != nil
+      languages.keep_if { |language|
+        language.casecmp(options[:language]) == 0
+      }
+    end
+
+    puts languages
+
+    [true, false].each { | dark_mode_enabled |
+      capture_ios_screenshots(
+        test_without_building: true,
+        derived_data_path: derived_data_path,
+        languages: languages,
+        dark_mode: dark_mode_enabled,
+        override_status_bar: true,
+      )
+    }
+  end
+
+  #####################################################################################
   # create_promo_screenshots
   # -----------------------------------------------------------------------------------
-  # This lane generates the promo screenshots. 
+  # This lane generates the promo screenshots.
   # Source plain screenshots are supposed to be in the screenshots_orig folder
   # If this folder doesn't exist, the system will ask to use the standard screenshot
-  # folder. If the user confirms, the pictures in the screenshots folder will be 
+  # folder. If the user confirms, the pictures in the screenshots folder will be
   # copied to a new screenshots_orig folder.
   # -----------------------------------------------------------------------------------
   # Usage:
-  # bundle exec fastlane create_promo_screenshots 
+  # bundle exec fastlane create_promo_screenshots
   #
   # Example:
   # bundle exec fastlane create_promo_screenshots
   #####################################################################################
   desc "Creates promo screenshots"
-  lane :create_promo_screenshots do |options| 
- 
+  lane :create_promo_screenshots do |options|
+
     # Run screenshots generator tool
     # All file paths are relative to the `fast file`.
     promo_screenshots(
@@ -91,17 +146,17 @@ platform :ios do
   #####################################################################################
   # download_promo_strings
   # -----------------------------------------------------------------------------------
-  # This lane downloads the promo strings to use for the creation of the enhanced 
+  # This lane downloads the promo strings to use for the creation of the enhanced
   # screenshots.
   # -----------------------------------------------------------------------------------
   # Usage:
-  # bundle exec fastlane download_promo_strings 
+  # bundle exec fastlane download_promo_strings
   #
   # Example:
   # bundle exec fastlane download_promo_strings
   #####################################################################################
   desc "Downloads translated promo strings from GlotPress"
-  lane :download_promo_strings do |options| 
+  lane :download_promo_strings do |options|
     files = {
       "app_store_screenshot-1" => {desc: "app_store_screenshot_1.txt"},
       "app_store_screenshot-2" => {desc: "app_store_screenshot_2.txt"},
@@ -145,11 +200,11 @@ platform :ios do
       ["zh-tw", "zh-Hant"],
     ]
 
-    gp_downloadmetadata(project_url: "https://translate.wordpress.org/projects/apps/ios/release-notes/", 
-      target_files: files, 
+    gp_downloadmetadata(project_url: "https://translate.wordpress.org/projects/apps/ios/release-notes/",
+      target_files: files,
       locales: metadata_locales,
       source_locale: "en-US",
       download_path: "./fastlane/appstoreres/metadata")
-  end 
+  end
 
 end
