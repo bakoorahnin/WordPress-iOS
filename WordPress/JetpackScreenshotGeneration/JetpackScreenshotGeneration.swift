@@ -1,43 +1,56 @@
-//
-//  JetpackScreenshotGeneration.swift
-//  JetpackScreenshotGeneration
-//
-//  Created by Momo Ozawa on 2021/04/23.
-//  Copyright © 2021 WordPress. All rights reserved.
-//
-
+import UIKit
 import XCTest
 
 class JetpackScreenshotGeneration: XCTestCase {
+    let imagesWaitTime: UInt32 = 10
 
-    override func setUpWithError() throws {
+    override func setUp() {
+        super.setUp()
+
         // Put setup code here. This method is called before the invocation of each test method in the class.
 
-        // In UI tests it is usually best to stop immediately when a failure occurs.
-        continueAfterFailure = false
+        // This does the shared setup including injecting mocks and launching the app
+        setUpTestSuite()
 
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // UI tests must launch the application that they test.
+        // The app is already launched so we can set it up for screenshots here
         let app = XCUIApplication()
-        app.launch()
+        setupSnapshot(app)
 
-        // Use recording to get started writing UI tests.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        if isIpad {
+            XCUIDevice.shared.orientation = UIDeviceOrientation.landscapeLeft
+        } else {
+            XCUIDevice.shared.orientation = UIDeviceOrientation.portrait
+        }
+
+        LoginFlow.login(siteUrl: "WordPress.com", username: ScreenshotCredentials.username, password: ScreenshotCredentials.password)
     }
 
-    func testLaunchPerformance() throws {
-        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, *) {
-            // This measures how long it takes to launch your application.
-            measure(metrics: [XCTApplicationLaunchMetric()]) {
-                XCUIApplication().launch()
-            }
-        }
+    override func tearDown() {
+        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        super.tearDown()
+    }
+
+    func testGenerateScreenshots() {
+
+        // Get Stats screenshot
+        let mySite = MySiteScreen()
+        let statsScreen = mySite.gotoStatsScreen()
+        statsScreen
+            .dismissCustomizeInsightsNotice()
+            .switchTo(mode: .months)
+            .thenTakeScreenshot(1, named: "Stats")
+
+    }
+}
+
+extension BaseScreen {
+    @discardableResult
+    func thenTakeScreenshot(_ index: Int, named title: String) -> Self {
+        let mode = isDarkMode ? "dark" : "light"
+        let filename = "\(index)-\(mode)-\(title)"
+
+        snapshot(filename)
+
+        return self
     }
 }
