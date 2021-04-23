@@ -2488,6 +2488,7 @@
 		FA4F661425946B8500EAA9F5 /* JetpackRestoreHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA4F661325946B8500EAA9F5 /* JetpackRestoreHeaderView.xib */; };
 		FA56D93926329D02005062B9 /* JetpackScreenshotGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA56D93826329D02005062B9 /* JetpackScreenshotGeneration.swift */; };
 		FA56D9542632A3DA005062B9 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8511CFC41C60884400B7CEED /* SnapshotHelper.swift */; };
+		FA56D9672632A451005062B9 /* ScreenshotCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9463A7221C05EE90081F11E /* ScreenshotCredentials.swift */; };
 		FA5C740F1C599BA7000B528C /* TableViewHeaderDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5C740E1C599BA7000B528C /* TableViewHeaderDetailView.swift */; };
 		FA681F8A25CA946B00DAA544 /* BaseRestoreStatusFailedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA681F8825CA946B00DAA544 /* BaseRestoreStatusFailedViewController.swift */; };
 		FA6FAB3525EF7C5700666CED /* ReaderRelatedPostsSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6FAB3425EF7C5700666CED /* ReaderRelatedPostsSectionHeaderView.swift */; };
@@ -18186,6 +18187,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA56D93926329D02005062B9 /* JetpackScreenshotGeneration.swift in Sources */,
+				FA56D9672632A451005062B9 /* ScreenshotCredentials.swift in Sources */,
 				FA56D9542632A3DA005062B9 /* SnapshotHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
